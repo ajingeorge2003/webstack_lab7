@@ -15,12 +15,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then(data => {
+                // Process and filter the data
                 books = data.items.map(item => ({
                     title: item.volumeInfo.title,
                     author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',
                     cover: item.volumeInfo.imageLinks ? item.volumeInfo.imageLinks.thumbnail : 'https://via.placeholder.com/150'
                 }));
 
+                // Apply search filtering
+                if (query) {
+                    books = books.filter(book =>
+                        book.title.toLowerCase().includes(query.toLowerCase()) ||
+                        book.author.toLowerCase().includes(query.toLowerCase())
+                    );
+                }
+
+                // Sort the filtered books alphabetically by title
                 books.sort((a, b) => a.title.localeCompare(b.title));
 
                 displayBooks(currentPage);
@@ -71,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fetch books when the genre or search query changes
     function handleSearch() {
         currentPage = 1; // Reset to first page when search or genre changes
-        fetchBooks(genreSelect.value, encodeURIComponent(searchBar.value.trim()));
+        fetchBooks(genreSelect.value, searchBar.value.trim());
     }
 
     genreSelect.addEventListener('change', handleSearch);
