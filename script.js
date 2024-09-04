@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const bookItem = document.createElement('div');
             bookItem.className = 'book-item';
             bookItem.innerHTML = `
-            <a href="${book.preview}">
+            <a href="${book.preview}" style="text-decoration:none">
                 <img src="${book.cover}" alt="${book.title}">
                 <h3>${book.title}</h3>
                 <p>Author: ${book.author}</p>
