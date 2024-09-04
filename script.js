@@ -15,14 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then(data => {
-                // Process and filter the data
                 books = data.items.map(item => ({
                     title: item.volumeInfo.title,
                     author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',
-                    cover: item.volumeInfo.imageLinks ? item.volumeInfo.imageLinks.thumbnail : 'https://via.placeholder.com/150'
+                    cover: item.volumeInfo.imageLinks ? item.volumeInfo.imageLinks.thumbnail : 'https://via.placeholder.com/150',
+                    preview: item.volumeInfo.previewLink ? item.volumeInfo.previewLink : './index.html'
                 }));
 
-                // Apply search filtering
                 if (query) {
                     books = books.filter(book =>
                         book.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -30,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     );
                 }
 
-                // Sort the filtered books alphabetically by title
                 books.sort((a, b) => a.title.localeCompare(b.title));
 
                 displayBooks(currentPage);
@@ -45,19 +43,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const startIndex = (page - 1) * booksPerPage;
         const endIndex = startIndex + booksPerPage;
         const booksToDisplay = books.slice(startIndex, endIndex);
-
+    
         const bookList = document.getElementById('book-list');
         bookList.innerHTML = '';
         booksToDisplay.forEach(book => {
             const bookItem = document.createElement('div');
             bookItem.className = 'book-item';
             bookItem.innerHTML = `
+            <a href="${book.preview}">
                 <img src="${book.cover}" alt="${book.title}">
                 <h3>${book.title}</h3>
-                <p>Author: ${book.author}</p>`;
+                <p>Author: ${book.author}</p>
+            </a>`;
             bookList.appendChild(bookItem);
         });
     }
+    
 
     function setupPagination() {
         const totalPages = Math.ceil(books.length / booksPerPage);
@@ -78,9 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Fetch books when the genre or search query changes
     function handleSearch() {
-        currentPage = 1; // Reset to first page when search or genre changes
+        currentPage = 1; 
         fetchBooks(genreSelect.value, searchBar.value.trim());
     }
 
